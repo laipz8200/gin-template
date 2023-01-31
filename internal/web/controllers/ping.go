@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"_template_/internal/constants"
 	"context"
-	"template/internal/constants"
 
 	"github.com/laipz8200/i18n"
 )

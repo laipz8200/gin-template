@@ -1,4 +1,4 @@
-module template
+module _template_
 
 go 1.19
 

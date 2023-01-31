@@ -1,10 +1,10 @@
 package web
 
 import (
+	"_template_/internal/constants"
+	"_template_/internal/web/controllers"
 	"context"
 	"net/http"
-	"template/internal/constants"
-	"template/internal/web/controllers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/laipz8200/i18n"

@@ -1,8 +1,8 @@
 package main
 
 import (
+	"_template_/internal/web"
 	"log"
-	"template/internal/web"
 )
 
 func main() {
