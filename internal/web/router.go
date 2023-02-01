@@ -14,6 +14,7 @@ func setup() {
 	engine.GET("/ping", handle(controllers.Ping))
 }
 
+// handle
 func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp, code int, err error)) func(ctx *gin.Context) {
 	return func(c *gin.Context) {
 		var lang string
@@ -21,8 +22,10 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 			lang = headers[0]
 		}
 
+		// Set language
 		ctx := context.WithValue(c.Request.Context(), constants.KEY_LANGUAGE, lang)
 
+		// Bind request paramters
 		var req Req
 		if err := c.Bind(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -32,6 +35,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 			return
 		}
 
+		// Execute controller function
 		resp, code, err := fn(ctx, req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
