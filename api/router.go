@@ -12,6 +12,7 @@ import (
 
 func setup() {
 	engine.GET("/ping", handle(controllers.Ping))
+	engine.POST("/transfer", handle(controllers.Transfer))
 }
 
 // handle
@@ -27,7 +28,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 
 		// Bind request paramters
 		var req Req
-		if err := c.Bind(&req); err != nil {
+		if err := c.ShouldBind(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":  http.StatusBadRequest,
 				"error": i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
