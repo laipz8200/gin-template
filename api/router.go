@@ -1,8 +1,8 @@
-package web
+package api
 
 import (
-	"_template_/internal/constants"
-	"_template_/internal/web/controllers"
+	"_template_/api/controllers"
+	"_template_/constants"
 	"context"
 	"net/http"
 
