@@ -2,7 +2,6 @@ package main
 
 import (
 	"_template_/api"
-	"_template_/registry"
 	"log"
 	"os"
 
@@ -23,14 +22,7 @@ func main() {
 			LogLevel:                  logger.Info,
 		},
 	)
-	db, err := gorm.Open(sqlite.Open(":memory:"), &config)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Init registry
-	r := NewRegistry(db)
-	registry.Init(r)
+	gorm.Open(sqlite.Open(":memory:"), &config)
 
 	if err := api.Run("127.0.0.1:8000"); err != nil {
 		log.Fatal(err)

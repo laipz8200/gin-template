@@ -12,7 +12,6 @@ import (
 
 func setup() {
 	engine.GET("/ping", handle(controllers.Ping))
-	engine.POST("/transfer", handle(controllers.Transfer))
 }
 
 // handle
