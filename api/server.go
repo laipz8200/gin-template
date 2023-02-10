@@ -14,11 +14,13 @@ import (
 
 var (
 	engine *gin.Engine
+	router *gin.RouterGroup
 	srv    *http.Server
 )
 
 func init() {
 	engine = gin.Default()
+	router = engine.Group("")
 	srv = &http.Server{
 		Handler: engine,
 	}

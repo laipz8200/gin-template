@@ -11,7 +11,7 @@ import (
 )
 
 func setup() {
-	engine.GET("/ping", handle(controllers.Ping))
+	router.GET("/ping", handle(controllers.Ping))
 }
 
 // handle
