@@ -27,6 +27,15 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 
 		// Bind request paramters
 		var req Req
+
+		if err := c.ShouldBindUri(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code":  http.StatusBadRequest,
+				"error": i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
+			})
+			return
+		}
+
 		if err := c.ShouldBind(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":  http.StatusBadRequest,
@@ -38,10 +47,15 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		// Execute controller function
 		resp, code, err := fn(ctx, req)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
+			c.JSON(code, gin.H{
 				"code":  code,
-				"error": i18n.Lang(lang).Sprintf("Internel server error: %s", err.Error()),
+				"error": i18n.Lang(lang).Sprintf(err.Error()),
 			})
+			return
+		}
+
+		if code == http.StatusNoContent {
+			c.Status(code)
 			return
 		}
 
