@@ -1,17 +1,28 @@
 package domain
 
-var registry IRegistry
+var registryObj IRegistry
+
+var _ IRegistry = (*registry)(nil)
 
 type IRegistry interface {
 	Repository() IRepository
 }
 
+type registry struct {
+	repository IRepository
+}
+
+// Repository implements IRegistry
+func (r *registry) Repository() IRepository {
+	return r.repository
+}
+
 func Registry() IRegistry {
-	return registry
+	return registryObj
 }
 
 func SetRegistry(r IRegistry) {
-	registry = r
+	registryObj = r
 }
 
 func InitRegistry() IRegistry {
