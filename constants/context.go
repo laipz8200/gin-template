@@ -1,5 +1,3 @@
 package constants
 
-type ContextKey string
-
-const KEY_LANGUAGE ContextKey = "language"
+const KEY_LANGUAGE string = "language"

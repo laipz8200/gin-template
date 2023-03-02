@@ -23,7 +23,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		}
 
 		// Set language
-		ctx := context.WithValue(c.Request.Context(), constants.KEY_LANGUAGE, lang)
+		c.Set(constants.KEY_LANGUAGE, lang)
 
 		// Bind request paramters
 		var req Req
@@ -45,7 +45,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		}
 
 		// Execute controller function
-		resp, code, err := fn(ctx, req)
+		resp, code, err := fn(c, req)
 		if err != nil {
 			c.JSON(code, gin.H{
 				"code":  code,
