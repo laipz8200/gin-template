@@ -1,6 +1,7 @@
 package api
 
 import (
+	"_template_/config"
 	"context"
 	"log"
 	"net/http"
@@ -18,7 +19,10 @@ var (
 	srv    *http.Server
 )
 
-func init() {
+func Init() {
+	if !config.Debug() {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	engine = gin.Default()
 	router = engine.Group("")
 	srv = &http.Server{
