@@ -1,0 +1,5 @@
+{
+    "app_name": "_template_",
+    "debug": true,
+    "secret": "some-key"
+}
