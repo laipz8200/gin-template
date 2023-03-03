@@ -2,9 +2,13 @@ package api
 
 import (
 	"_template_/api/controllers"
+	"_template_/api/middlewares"
+	"_template_/api/schemas"
+	"_template_/config"
 	"_template_/constants"
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/laipz8200/i18n"
@@ -12,6 +16,8 @@ import (
 
 func setup() {
 	router.GET("/ping", handle(controllers.Ping))
+	app := router.Group(strings.ToLower(config.AppName()))
+	app.Use(middlewares.AuthMiddleware)
 }
 
 // handle
@@ -29,17 +35,17 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		var req Req
 
 		if err := c.ShouldBindUri(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"code":  http.StatusBadRequest,
-				"error": i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
+			c.JSON(http.StatusBadRequest, schemas.ErrMsg{
+				Code:  http.StatusBadRequest,
+				Error: i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
 			})
 			return
 		}
 
 		if err := c.ShouldBind(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"code":  http.StatusBadRequest,
-				"error": i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
+			c.JSON(http.StatusBadRequest, schemas.ErrMsg{
+				Code:  http.StatusBadRequest,
+				Error: i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
 			})
 			return
 		}
@@ -47,9 +53,9 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		// Execute controller function
 		resp, code, err := fn(c, req)
 		if err != nil {
-			c.JSON(code, gin.H{
-				"code":  code,
-				"error": i18n.Lang(lang).Sprintf(err.Error()),
+			c.JSON(code, schemas.ErrMsg{
+				Code:  code,
+				Error: i18n.Lang(lang).Sprintf(err.Error()),
 			})
 			return
 		}
@@ -59,9 +65,9 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"code": code,
-			"data": resp,
+		c.JSON(http.StatusOK, schemas.Resp{
+			Code: code,
+			Data: resp,
 		})
 	}
 }
