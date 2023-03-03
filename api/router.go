@@ -65,7 +65,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 			return
 		}
 
-		c.JSON(http.StatusOK, schemas.Resp{
+		c.JSON(code, schemas.Resp{
 			Code: code,
 			Data: resp,
 		})
