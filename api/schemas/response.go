@@ -1,11 +1,11 @@
 package schemas
 
-type ErrMsg struct {
+type ErrorMessage struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
 }
 
-type Resp struct {
+type Response struct {
 	Code int `json:"code"`
 	Data any `json:"data"`
 }

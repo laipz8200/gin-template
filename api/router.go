@@ -35,7 +35,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		var req Req
 
 		if err := c.ShouldBindUri(&req); err != nil {
-			c.JSON(http.StatusBadRequest, schemas.ErrMsg{
+			c.JSON(http.StatusBadRequest, schemas.ErrorMessage{
 				Code:  http.StatusBadRequest,
 				Error: i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
 			})
@@ -43,7 +43,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		}
 
 		if err := c.ShouldBind(&req); err != nil {
-			c.JSON(http.StatusBadRequest, schemas.ErrMsg{
+			c.JSON(http.StatusBadRequest, schemas.ErrorMessage{
 				Code:  http.StatusBadRequest,
 				Error: i18n.Lang(lang).Sprintf("Bad request: %s", err.Error()),
 			})
@@ -53,7 +53,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		// Execute controller function
 		resp, code, err := fn(c, req)
 		if err != nil {
-			c.JSON(code, schemas.ErrMsg{
+			c.JSON(code, schemas.ErrorMessage{
 				Code:  code,
 				Error: i18n.Lang(lang).Sprintf(err.Error()),
 			})
@@ -65,7 +65,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 			return
 		}
 
-		c.JSON(code, schemas.Resp{
+		c.JSON(code, schemas.Response{
 			Code: code,
 			Data: resp,
 		})

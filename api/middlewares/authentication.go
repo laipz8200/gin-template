@@ -55,7 +55,7 @@ func getUserInfo(jwtString string) (*UserInfo, error) {
 func AuthMiddleware(c *gin.Context) {
 	jwtString, err := getJWT(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, schemas.ErrMsg{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, schemas.ErrorMessage{
 			Code:  http.StatusUnauthorized,
 			Error: err.Error(),
 		})
@@ -63,7 +63,7 @@ func AuthMiddleware(c *gin.Context) {
 	}
 	userInfo, err := getUserInfo(jwtString)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, schemas.ErrMsg{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, schemas.ErrorMessage{
 			Code:  http.StatusUnauthorized,
 			Error: err.Error(),
 		})
