@@ -19,9 +19,9 @@ func init() {
 
 func main() {
 	// Connect to database
-	dbconfig := dbConfig()
+	dbConfig := dbConfig()
 
-	gorm.Open(sqlite.Open(":memory:"), &dbconfig)
+	gorm.Open(sqlite.Open(":memory:"), &dbConfig)
 
 	if err := api.Run("0.0.0.0:8000"); err != nil {
 		log.Fatal(err)

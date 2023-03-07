@@ -2,7 +2,7 @@ package api
 
 import (
 	"_template_/api/controllers"
-	"_template_/api/middlewares"
+	"_template_/api/middleware"
 	"_template_/api/schemas"
 	"_template_/config"
 	"_template_/constants"
@@ -17,7 +17,7 @@ import (
 func setup() {
 	router.GET("/ping", handle(controllers.Ping))
 	app := router.Group(strings.ToLower(config.AppName()))
-	app.Use(middlewares.AuthMiddleware)
+	app.Use(middleware.AuthMiddleware)
 }
 
 // handle
@@ -29,9 +29,9 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		}
 
 		// Set language
-		c.Set(constants.KEY_LANGUAGE, lang)
+		c.Set(constants.KeyLanguage, lang)
 
-		// Bind request paramters
+		// Bind request parameters
 		var req Req
 
 		if err := c.ShouldBindUri(&req); err != nil {

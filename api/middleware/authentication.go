@@ -1,4 +1,4 @@
-package middlewares
+package middleware
 
 import (
 	"_template_/api/schemas"
@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// A struct to store the user info from the jwt
+// UserInfo is a struct to store the user info from the jwt
 type UserInfo struct {
 	ID       string   `json:"id"`
 	Username string   `json:"username"`
@@ -51,7 +51,7 @@ func getUserInfo(jwtString string) (*UserInfo, error) {
 	return userInfo, nil
 }
 
-// A middleware function to authenticate the request and set the user info in the context
+// AuthMiddleware is a middleware function to authenticate the request and set the user info in the context
 func AuthMiddleware(c *gin.Context) {
 	jwtString, err := getJWT(c)
 	if err != nil {
@@ -69,6 +69,6 @@ func AuthMiddleware(c *gin.Context) {
 		})
 		return
 	}
-	c.Set(constants.KEY_CURRENT_USER, userInfo)
+	c.Set(constants.KeyCurrentUser, userInfo)
 	c.Next()
 }

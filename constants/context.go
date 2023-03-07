@@ -1,6 +1,6 @@
 package constants
 
 const (
-	KEY_LANGUAGE     string = "language"
-	KEY_CURRENT_USER string = "current_user"
+	KeyLanguage    string = "language"
+	KeyCurrentUser string = "current_user"
 )
