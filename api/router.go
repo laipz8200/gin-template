@@ -51,23 +51,28 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 		}
 
 		// Execute controller function
-		resp, code, err := fn(c, req)
-		if err != nil {
-			c.JSON(code, schemas.ErrorMessage{
-				Code:  code,
-				Error: i18n.Lang(lang).Sprintf(err.Error()),
+		select {
+		case <-c.Request.Context().Done():
+			c.Abort()
+		default:
+			resp, code, err := fn(c, req)
+			if err != nil {
+				c.JSON(code, schemas.ErrorMessage{
+					Code:  code,
+					Error: i18n.Lang(lang).Sprintf(err.Error()),
+				})
+				return
+			}
+
+			if code == http.StatusNoContent {
+				c.Status(code)
+				return
+			}
+
+			c.JSON(code, schemas.Response{
+				Code: code,
+				Data: resp,
 			})
-			return
 		}
-
-		if code == http.StatusNoContent {
-			c.Status(code)
-			return
-		}
-
-		c.JSON(code, schemas.Response{
-			Code: code,
-			Data: resp,
-		})
 	}
 }
