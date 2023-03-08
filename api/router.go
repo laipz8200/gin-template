@@ -17,7 +17,18 @@ import (
 func setup() {
 	router.GET("/ping", handle(controllers.Ping))
 	app := router.Group(strings.ToLower(config.AppName()))
-	app.Use(middleware.AuthMiddleware)
+	{
+		private := app.Group("")
+		private.Use(middleware.AuthMiddleware)
+		{
+			private.GET("")
+		}
+
+		public := app.Group("")
+		{
+			public.GET("")
+		}
+	}
 }
 
 // handle
@@ -30,6 +41,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 
 		// Set language
 		c.Set(constants.KeyLanguage, lang)
+		ctx := c.Request.Context()
 
 		// Bind request parameters
 		var req Req
@@ -52,10 +64,11 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 
 		// Execute controller function
 		select {
-		case <-c.Request.Context().Done():
+		case <-ctx.Done():
 			c.Abort()
+			return
 		default:
-			resp, code, err := fn(c, req)
+			resp, code, err := fn(ctx, req)
 			if err != nil {
 				c.JSON(code, schemas.ErrorMessage{
 					Code:  code,
