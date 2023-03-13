@@ -32,7 +32,7 @@ func setup() {
 }
 
 // handle
-func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp, code int, err error)) func(ctx *gin.Context) {
+func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req) (resp Resp, code int, err error)) func(ctx *gin.Context) {
 	return func(c *gin.Context) {
 		var lang string
 		if headers, ok := c.Request.Header["Language"]; ok && len(headers) != 0 {
@@ -68,7 +68,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 			c.Abort()
 			return
 		default:
-			resp, code, err := fn(ctx, req)
+			result, code, err := fn(ctx, req)
 			if err != nil {
 				c.JSON(code, schemas.ErrorMessage{
 					Code:  code,
@@ -82,10 +82,7 @@ func handle[Req any, Resp any](fn func(ctx context.Context, req Req) (resp Resp,
 				return
 			}
 
-			c.JSON(code, schemas.Response{
-				Code: code,
-				Data: resp,
-			})
+			c.JSON(code, result.ToResponse(code))
 		}
 	}
 }
