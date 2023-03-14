@@ -1,6 +1,8 @@
 package constants
 
+type ContextKey string
+
 const (
-	KeyLanguage    string = "language"
-	KeyCurrentUser string = "current_user"
+	KeyLanguage    ContextKey = "language"
+	KeyCurrentUser ContextKey = "current_user"
 )

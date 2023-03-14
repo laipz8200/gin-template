@@ -40,8 +40,11 @@ func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req
 		}
 
 		// Set language
-		c.Set(constants.KeyLanguage, lang)
+		c.Set(string(constants.KeyLanguage), lang)
 		ctx := c.Request.Context()
+		for k, v := range c.Keys {
+			ctx = context.WithValue(ctx, constants.ContextKey(k), v)
+		}
 
 		// Bind request parameters
 		var req Req
@@ -70,6 +73,9 @@ func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req
 		default:
 			result, code, err := fn(ctx, req)
 			if err != nil {
+				if code == 0 {
+					code = http.StatusInternalServerError
+				}
 				c.JSON(code, schemas.ErrorMessage{
 					Code:  code,
 					Error: i18n.Lang(lang).Sprintf(err.Error()),
@@ -82,6 +88,9 @@ func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req
 				return
 			}
 
+			if code == 0 {
+				code = http.StatusOK
+			}
 			c.JSON(code, result.ToResponse(code))
 		}
 	}

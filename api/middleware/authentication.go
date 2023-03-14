@@ -69,6 +69,6 @@ func AuthMiddleware(c *gin.Context) {
 		})
 		return
 	}
-	c.Set(constants.KeyCurrentUser, userInfo)
+	c.Set(string(constants.KeyCurrentUser), userInfo)
 	c.Next()
 }
