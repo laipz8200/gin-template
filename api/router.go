@@ -92,26 +92,40 @@ func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req
 			return
 		default:
 			result, code, err := fn(ctx, req)
+
+			httpCode := code
 			if err != nil {
+				// If code is not set, set code and http code to 500.
 				if code == 0 {
 					code = http.StatusInternalServerError
+					httpCode = code
+				} else if code >= 10000 { // If code is greater than 10000, set http code to the first 3 digits.
+					httpCode = code / 100
 				}
-				c.JSON(code, schemas.ErrorMessage{
+
+				c.JSON(httpCode, schemas.ErrorMessage{
 					Code:  code,
 					Error: i18n.Lang(lang).Sprintf(err.Error()),
 				})
 				return
 			}
 
+			// If code is set to 204, no content is returned.
 			if code == http.StatusNoContent {
 				c.Status(code)
 				return
 			}
 
+			// If code is not set, set code and http code to 200.
 			if code == 0 {
 				code = http.StatusOK
+				httpCode = code
+			} else if code >= 10000 { // If code is greater than 10000, set http code to the first 3 digits.
+				httpCode = code / 100
 			}
-			c.JSON(code, result.ToResponse(code))
+
+			c.JSON(httpCode, result.ToResponse(code))
+			return
 		}
 	}
 }
