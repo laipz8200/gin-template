@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 	"github.com/laipz8200/i18n"
 )
 
@@ -39,14 +40,16 @@ func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req
 			lang = headers[0]
 		}
 
-		// Set language
+		// Set language params.
 		c.Set(string(constants.KeyLanguage), lang)
+
+		// Move keys to standard context.
 		ctx := c.Request.Context()
 		for k, v := range c.Keys {
 			ctx = context.WithValue(ctx, constants.ContextKey(k), v)
 		}
 
-		// Bind request parameters
+		// Bind request parameters.
 		var req Req
 
 		if err := c.ShouldBindUri(&req); err != nil {
@@ -65,7 +68,24 @@ func handle[Req any, Resp schemas.Response](fn func(ctx context.Context, req Req
 			return
 		}
 
-		// Execute controller function
+		// Validate request parameters.
+		validate := validator.New()
+		if err := validate.Struct(req); err != nil {
+			errors := make([]string, 0)
+			for _, err := range err.(validator.ValidationErrors) {
+				tag := i18n.Lang(lang).Sprintf(err.Tag())
+				param := i18n.Lang(lang).Sprintf(err.Param())
+				errors = append(errors, i18n.Lang(lang).Sprintf("Validation error: key %s is %s %s, got %v", err.Field(), tag, param, err.Value()))
+			}
+
+			c.JSON(http.StatusBadRequest, schemas.ErrorMessage{
+				Code:  http.StatusBadRequest,
+				Error: strings.Join(errors, "; "),
+			})
+			return
+		}
+
+		// Execute controller function.
 		select {
 		case <-ctx.Done():
 			c.Abort()
