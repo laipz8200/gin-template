@@ -15,9 +15,9 @@ import (
 	"github.com/laipz8200/i18n"
 )
 
-func setup() {
-	router.GET("/ping", handle(controllers.Ping))
-	app := router.Group(strings.ToLower(config.AppName()))
+func (s *server) setup() {
+	s.router.GET("/ping", handle(controllers.Ping))
+	app := s.router.Group(strings.ToLower(config.AppName()))
 	{
 		private := app.Group("")
 		private.Use(middleware.AuthMiddleware)

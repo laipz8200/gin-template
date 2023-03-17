@@ -13,29 +13,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var (
+type server struct {
 	engine *gin.Engine
 	router *gin.RouterGroup
 	srv    *http.Server
-)
+}
 
-func Init() {
+func NewServer() *server {
 	if !config.Debug() {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	engine = gin.Default()
-	router = engine.Group("")
-	srv = &http.Server{
+	engine := gin.Default()
+	router := engine.Group("")
+	srv := &http.Server{
 		Handler: engine,
+	}
+
+	return &server{
+		engine: engine,
+		router: router,
+		srv:    srv,
 	}
 }
 
-// Run
-func Run(addr string) (err error) {
-	setup()
-	srv.Addr = addr
+func (s *server) Run(addr string) (err error) {
+	s.setup()
+	s.srv.Addr = addr
 	go func() {
-		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err = s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatal(err)
 		}
 	}()
@@ -48,7 +53,7 @@ func Run(addr string) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err = srv.Shutdown(ctx); err != nil {
+	if err = s.srv.Shutdown(ctx); err != nil {
 		return
 	}
 

@@ -7,15 +7,21 @@ import (
 
 var c config = config{}
 
-func Init(filepath string) {
+func LoadFromFile(filepath string) config {
 	byteValue, err := os.ReadFile(filepath)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := json.Unmarshal(byteValue, &c); err != nil {
+	var config config
+	if err := json.Unmarshal(byteValue, &config); err != nil {
 		panic(err)
 	}
+	return config
+}
+
+func SetConfig(config config) {
+	c = config
 }
 
 type config struct {
