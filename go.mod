@@ -6,7 +6,6 @@ require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	github.com/google/wire v0.5.0
 	github.com/laipz8200/i18n v0.1.1
 	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.4
